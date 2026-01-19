@@ -1,13 +1,13 @@
-name: YouTube Cloud Downloader
+name: YouTube Cloud Downloader Pro
 
 on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: 'YouTube Video URL'
+        description: 'YouTube Link hier einfügen'
         required: true
       format:
-        description: 'Format (mp4 oder mp3)'
+        description: 'Wähle dein Format'
         default: 'mp4'
         type: choice
         options:
@@ -15,28 +15,37 @@ on:
         - mp3
 
 jobs:
-  download:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Wichtig für das Erstellen von Releases
+    
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install yt-dlp & ffmpeg
+      - name: Setup yt-dlp & FFmpeg
         run: |
-          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+          sudo wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp
           sudo chmod a+rx /usr/local/bin/yt-dlp
           sudo apt-get update && sudo apt-get install ffmpeg -y
 
-      - name: Download Video
+      - name: Download & Processing
+        id: download
         run: |
           if [ "${{ github.event.inputs.format }}" = "mp3" ]; then
-            yt-dlp -x --audio-format mp3 "${{ github.event.inputs.video_url }}" -o "downloaded_file.%(ext)s"
+            yt-dlp -x --audio-format mp3 "${{ github.event.inputs.video_url }}" -o "YT-Download.%(ext)s"
           else
-            yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" "${{ github.event.inputs.video_url }}" -o "downloaded_file.%(ext)s"
+            yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" "${{ github.event.inputs.video_url }}" -o "YT-Download.%(ext)s"
           fi
+          echo "filename=$(ls YT-Download.*)" >> $GITHUB_OUTPUT
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release & Upload
+        uses: softprops/action-gh-release@v2
         with:
-          name: YouTube-Download
-          path: downloaded_file.*
+          tag_name: download-${{ github.run_number }}
+          name: Download vom ${{ github.event.repository.updated_at }}
+          files: ${{ steps.download.outputs.filename }}
+          body: "Dein YouTube-Download ist fertig! Link: ${{ github.event.inputs.video_url }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
