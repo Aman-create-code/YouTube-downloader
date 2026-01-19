@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>YT Cloud Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-950 text-white flex items-center justify-center min-h-screen">
+    <div class="max-w-md w-full p-8 bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="bg-red-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-500/20">
+                <i data-lucide="youtube" class="text-white w-10 h-10"></i>
+            </div>
+            <h1 class="text-2xl font-black">YT Cloud Downloader</h1>
+            <p class="text-slate-400 text-sm mt-2">Download via GitHub Actions</p>
+        </div>
+
+        <div class="space-y-4">
+            <input type="text" id="ytUrl" placeholder="YouTube Link einfügen..." 
+                class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-red-500 transition">
+            
+            <button onclick="goToGithub()" 
+                class="w-full bg-red-600 hover:bg-red-500 py-4 rounded-2xl font-bold text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2">
+                <i data-lucide="external-link" class="w-5 h-5"></i>
+                Zu GitHub Actions
+            </button>
+        </div>
+
+        <div class="mt-8 p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
+            <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest">Anleitung</p>
+            <ol class="text-xs text-slate-400 space-y-2 list-decimal ml-4">
+                <li>Link oben kopieren.</li>
+                <li>Auf den Button klicken.</li>
+                <li>Bei GitHub auf "Run workflow" klicken.</li>
+                <li>Link einfügen und Format wählen.</li>
+                <li>Warten und Datei bei "Artifacts" laden.</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        function goToGithub() {
+            // Ersetze DEIN_USER/DEIN_REPO mit deinem echten Pfad
+            const githubPath = "https://github.com/DEIN_USER/DEIN_REPO/actions/workflows/download.yml";
+            window.open(githubPath, '_blank');
+        }
+    </script>
+</body>
+</html>
